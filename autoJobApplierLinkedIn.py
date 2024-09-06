@@ -513,19 +513,34 @@ def external_apply(pagination_element, job_id, job_link, resume, date_listed, ap
         if pagination_element != None: return True, application_link, tabs_count
     try:
         wait.until(EC.element_to_be_clickable((By.XPATH, '//button[contains(span, "Apply") and not(span[contains(@class, "disabled")])]'))).click()
-        windows = driver.window_handles
-        tabs_count = len(windows)
-        driver.switch_to.window(windows[-1])
-        application_link = driver.current_url
+        print_lg('Waiting for external link...')
+        sleep(2)
+
+        started_tryagain_for_exteranl_link = False
+        while True:
+            windows = driver.window_handles
+            tabs_count = len(windows)
+            driver.switch_to.window(windows[-1])
+            application_link = driver.current_url
+            if application_link.startswith("https://www.linkedin.com/jobs/search/"):
+                if started_tryagain_for_exteranl_link:
+                    # already waited for long time, so move to failed job
+                    raise Exception("External link window is not opened")
+                else:
+                    # external link is not pop up, wait some times
+                    print_lg('External link window is not opened. Waiting for 5s more...')
+                    started_tryagain_for_exteranl_link = True
+                    sleep(5)
+            else:
+                break
+
         print_lg('Got the external application link "{}"'.format(application_link))
-        print_lg('Closing external tab1...')
+        print_lg('Closing external tab...')
         if close_tabs: driver.close()
-        print_lg('Closing external tab2...')
-        sleep(5)
-        print_lg('Switching to linkedin tab1...')
+        sleep(1)
+        print_lg('Switching to linkedin tab...')
         driver.switch_to.window(linkedIn_tab)
-        print_lg('Switching to linkedin tab2...')
-        sleep(5)
+        sleep(1)
         return False, application_link, tabs_count
     except Exception as e:
         # print_lg(e)
