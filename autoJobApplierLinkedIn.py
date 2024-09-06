@@ -519,21 +519,24 @@ def external_apply(pagination_element, job_id, job_link, resume, date_listed, ap
         print_lg('Waiting for external link...')
         sleep(2)
 
-        started_tryagain_for_exteranl_link = False
+        started_tryagain_for_external_link = False
         while True:
             windows = driver.window_handles
             tabs_count = len(windows)
             driver.switch_to.window(windows[-1])
             application_link = driver.current_url
             if application_link.startswith("https://www.linkedin.com/jobs/search/"):
-                if started_tryagain_for_exteranl_link:
+                if started_tryagain_for_external_link:
                     # already waited for long time, so move to failed job
                     raise Exception("External link window is not opened")
                 else:
                     # external link is not pop up, wait some times
                     print_lg('External link window is not opened. Waiting for 5s more...')
-                    started_tryagain_for_exteranl_link = True
+                    started_tryagain_for_external_link = True
                     sleep(5)
+                    print_lg('Trying for Continue applying...')
+                    wait.until(EC.element_to_be_clickable((By.XPATH, '//button[contains(span, "Continue applying") and not(span[contains(@class, "disabled")])]'))).click()
+
             else:
                 break
 
