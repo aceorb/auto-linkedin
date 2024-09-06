@@ -205,7 +205,7 @@ def get_page_info():
 
 
 # Function to get job main details
-def get_job_main_details(job, blacklisted_companies, rejected_jobs, error_jobs):
+def get_job_main_details(job, blacklisted_companies, rejected_jobs, error_jobs, applied_jobs):
     job_details_button = job.find_element(By.CLASS_NAME, "job-card-list__title")
     scroll_to_view(driver, job_details_button, True)
     title = job_details_button.text
@@ -229,6 +229,9 @@ def get_job_main_details(job, blacklisted_companies, rejected_jobs, error_jobs):
         skip = True
     elif "Intern" in title:
         print_lg(f'Skipping "{title} | {company}" job (Intern JOb). Job ID: {job_id}!')
+        skip = True
+    elif job_id in applied_jobs:
+        print_lg(f'Skipping already applied to "{title} | {company}" job. Job ID: {job_id}!')
         skip = True
     try:
         if job.find_element(By.CLASS_NAME, "job-card-container__footer-job-state").text == "Applied":
@@ -645,7 +648,7 @@ def apply_to_jobs(search_terms):
                     if current_count >= switch_number: break
                     print_lg("\n-@-\n")
 
-                    job_id,title,company,work_location,work_style,skip = get_job_main_details(job, blacklisted_companies, rejected_jobs, error_jobs)
+                    job_id,title,company,work_location,work_style,skip = get_job_main_details(job, blacklisted_companies, rejected_jobs, error_jobs, applied_jobs)
 
                     if skip: continue
                     # Redundant fail safe check for applied jobs!
@@ -653,7 +656,6 @@ def apply_to_jobs(search_terms):
                         if job_id in applied_jobs or find_by_class(driver, "jobs-s-apply__application-link", 2):
                             print_lg(f'Already applied to "{title} | {company}" job. Job ID: {job_id}!')
                             continue
-                        print(f"{job_id} - {error_jobs}")
                         if job_id in error_jobs:
                             print_lg(f'Already marked as error job to "{title} | {company}" job. Job ID: {job_id}!')
                             continue
@@ -915,11 +917,13 @@ def apply_to_jobs(search_terms):
                 try:
                     pagination_element.find_element(By.XPATH, f"//button[@aria-label='Page {current_page+1}']").click()
                     print_lg(f"\n>-> Now on Page {current_page+1} \n")
-                 # TODO
-                 #   rest_min = randint(2, 5)
-                 #   print_lg(f"\n>-> Sleeping for{rest_min}m \n")
-                 #   sleep(rest_min * 60)
-                    sleep(60)
+                    if current_count > 20:
+                        rest_min = randint(1, 3)
+                        print_lg(f"\n>-> Sleeping for {rest_min}m \n")
+                        sleep(rest_min * 60)
+                        # sleep(60)
+                    else:
+                        sleep(5)
                 except NoSuchElementException:
                     print_lg(f"\n>-> Didn't find Page {current_page+1}. Probably at the end page of results!\n")
                     break
