@@ -518,8 +518,14 @@ def external_apply(pagination_element, job_id, job_link, resume, date_listed, ap
         driver.switch_to.window(windows[-1])
         application_link = driver.current_url
         print_lg('Got the external application link "{}"'.format(application_link))
+        print_lg('Closing external tab1...')
         if close_tabs: driver.close()
+        print_lg('Closing external tab2...')
+        sleep(5)
+        print_lg('Switching to linkedin tab1...')
         driver.switch_to.window(linkedIn_tab)
+        print_lg('Switching to linkedin tab2...')
+        sleep(5)
         return False, application_link, tabs_count
     except Exception as e:
         # print_lg(e)

@@ -254,7 +254,7 @@ chatGPT_password = "example_password"
 chatGPT_resume_chat_title = "Resume review and feedback."
 
 # Give the path to the folder where all the generated resumes are to be stored
-generated_resume_path = "all resumes/"
+generated_resume_path = "all_resumes/"
 
 
 
