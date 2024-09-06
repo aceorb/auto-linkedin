@@ -170,6 +170,10 @@ disability_status = "No"      # "Yes", "No", "Decline"
 veteran_status = "No"         # "Yes", "No", "Decline"
 
 linkedin_profile = "https://www.linkedin.com/in/juan-carlos-villarreal-avalos-0a50a0131"
+
+current_company = "J&D Landscape LLC"
+
+authorized_to_work_usa = "Yes"
 ##
 
 
@@ -192,7 +196,7 @@ about_company_good_words = []      # (dynamic multiple search) or leave empty as
 
 
 # Avoid applying to these companies if they have these bad words in their 'Job Description' section...  (In development)
-bad_words = ["Embedded Engineering", "Dev Ops", "C#", ".Net", "C++", "Golang", "Ruby", "Intership", "Volunteer", "Swift", "Kotlin", "Salesforce"]                     # (dynamic multiple search) or leave empty as []. Case Insensitive. Ex: ["word_1", "phrase 1", "word word", "polygraph", "US Citizenship", "Security Clearance"]
+bad_words = ["Embedded Engineering", "Dev Ops", "C++", "Golang", "Ruby", "Intership", "Volunteer", "Swift", "Kotlin", "Salesforce"]                     # (dynamic multiple search) or leave empty as []. Case Insensitive. Ex: ["word_1", "phrase 1", "word word", "polygraph", "US Citizenship", "Security Clearance"]
 
 # Do you have an active Security Clearance? (True for Yes and False for No)
 security_clearance = False         # True or False
@@ -211,18 +215,18 @@ current_experience = -1             # Integers > -2 (Ex: -1, 0, 1, 2, 3, 4...)
 
 ## Allow Manual Inputs
 # Should the tool pause before every submit application during easy apply to let you check the information?
-pause_before_submit = True         # True or False ,   Will be treated as False if run_in_background is True
+pause_before_submit = False         # True or False ,   Will be treated as False if run_in_background is True
 
 # Should the tool pause if it needs help in answering questions during easy apply?
 # Note: If set as False will answer randomly...
-pause_at_failed_question = True    # True or False ,   Will be treated as False if run_in_background is True
+pause_at_failed_question = False    # True or False ,   Will be treated as False if run_in_background is True
 ##
 
 # Keep the External Application tabs open? (Note: RECOMMENDED TO LEAVE IT AS TRUE, if you set it false, be sure to CLOSE ALL TABS BEFORE CLOSING THE BROWSER!!!)
 close_tabs = True                  # True or False
 
 # After how many number of applications should we keep switching? 
-switch_number = 10                 # Only numbers greater than 0... Don't put in quotes
+switch_number = 1000                 # Only numbers greater than 0... Don't put in quotes
 
 ## Upcoming features (In Development)
 # Send connection requests to HR's
@@ -232,9 +236,9 @@ connect_hr = True                  # True or False
 connect_request_message = ""       # Leave Empty to send connection request without personalized invitation (recommended to leave it empty, since you only get 10 per month without LinkedIn Premium*)
 
 # Do you want the program to run continuously until you stop it? (Beta)
-run_non_stop = False               # True or False ,   Will be treated as False if run_in_background is True
-alternate_sortby = True            # True or False
-cycle_date_posted = True           # True or False
+run_non_stop = True               # True or False ,   Will be treated as False if run_in_background is True
+alternate_sortby = False            # True or False
+cycle_date_posted = False           # True or False
 stop_date_cycle_at_24hr = True     # True or False
 ##
 
