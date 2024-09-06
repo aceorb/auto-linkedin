@@ -12,7 +12,9 @@ GitHub:     https://github.com/GodsScion/Auto_job_applier_linkedIn
 '''
 
 from modules.helpers import make_directories
-from setup.config import run_in_background, undetected_mode, disable_extensions, safe_mode, file_name, failed_file_name, logs_folder_path, default_resume_path, generated_resume_path
+from setup.config import run_in_background, undetected_mode, disable_extensions, safe_mode, file_name, failed_file_name, \
+    logs_folder_path, default_resume_path, generated_resume_path, custom_profile
+
 if undetected_mode:
     import undetected_chromedriver as uc
 else: 
@@ -30,7 +32,7 @@ try:
     options = uc.ChromeOptions() if undetected_mode else Options()
     if run_in_background:   options.add_argument("--headless")
     if disable_extensions:  options.add_argument("--disable-extensions")
-
+    if custom_profile: options.add_argument(f'--profile-directory={custom_profile}')
     print_lg("IF YOU HAVE MORE THAN 10 TABS OPENED, PLEASE CLOSE OR BOOKMARK THEM! Or it's highly likely that application will just open browser and not do anything!")
     if safe_mode: 
         print_lg("SAFE MODE: Will login with a guest profile, browsing history will not be saved in the browser!")

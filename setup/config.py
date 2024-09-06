@@ -16,6 +16,7 @@ GitHub:     https://github.com/GodsScion/Auto_job_applier_linkedIn
   
 # >>>>>>>>>>> Global Settings <<<<<<<<<<<
 
+custom_profile = "Profile 9" # Empty for Default check Profile with chrome://version
 # Directory and name of the files where history of applied jobs is saved (Sentence after the last "/" will be considered as the file name).
 file_name = "all_excels/all_applied_applications_history.csv"
 failed_file_name = "all_excels/all_failed_applications_history.csv"

@@ -915,6 +915,7 @@ def apply_to_jobs(search_terms):
                 try:
                     pagination_element.find_element(By.XPATH, f"//button[@aria-label='Page {current_page+1}']").click()
                     print_lg(f"\n>-> Now on Page {current_page+1} \n")
+                 # TODO
                  #   rest_min = randint(2, 5)
                  #   print_lg(f"\n>-> Sleeping for{rest_min}m \n")
                  #   sleep(rest_min * 60)
