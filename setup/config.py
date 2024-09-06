@@ -227,7 +227,7 @@ pause_at_failed_question = False    # True or False ,   Will be treated as False
 close_tabs = True                  # True or False
 
 # After how many number of applications should we keep switching? 
-switch_number = 1000                 # Only numbers greater than 0... Don't put in quotes
+switch_number = 200                 # Only numbers greater than 0... Don't put in quotes
 
 ## Upcoming features (In Development)
 # Send connection requests to HR's
