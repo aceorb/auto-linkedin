@@ -143,7 +143,7 @@ zipcode = "29096"
 country = "Mexico"
 
 first_name = "Juan Carlos"                 # Your first name in quotes Eg: "First", "Sai"
-middle_name = "Vignesh"            # Your name in quotes Eg: "Middle", "Vignesh", ""
+middle_name = ""            # Your name in quotes Eg: "Middle", "Vignesh", ""
 last_name = "Villarreal"                # Your last name in quotes Eg: "Last", "Golla"
 
 # Your LinkedIn headline in quotes Eg: "Software Engineer @ Google, Masters in Computer Science", "Recent Grad Student @ MIT, Computer Science"
@@ -237,7 +237,7 @@ connect_hr = True                  # True or False
 connect_request_message = ""       # Leave Empty to send connection request without personalized invitation (recommended to leave it empty, since you only get 10 per month without LinkedIn Premium*)
 
 # Do you want the program to run continuously until you stop it? (Beta)
-run_non_stop = True               # True or False ,   Will be treated as False if run_in_background is True
+run_non_stop = False               # True or False ,   Will be treated as False if run_in_background is True
 alternate_sortby = False            # True or False
 cycle_date_posted = False           # True or False
 stop_date_cycle_at_24hr = True     # True or False
