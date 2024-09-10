@@ -840,7 +840,7 @@ def apply_to_jobs(search_terms):
                                 next_counter = 0
                                 while next_button:
                                     next_counter += 1
-                                    if next_counter >= 6: 
+                                    if next_counter >= 10:
                                         if pause_at_failed_question:
                                             screenshot(driver, job_id, "Needed manual intervention for failed question")
                                             pyautogui.alert("Couldn't answer one or more questions.\nPlease click \"Continue\" once done.\nDO NOT CLICK Back, Next or Review button in LinkedIn.\n\n\n\n\nYou can turn off \"Pause at failed question\" setting in config.py", "Help Needed", "Continue")

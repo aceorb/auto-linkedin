@@ -57,10 +57,13 @@ password = "example_password"      # Enter your password in the quotes
 # These Sentences are Searched in LinkedIn
 # Enter your search terms inside '[ ]' with quotes ' "searching title" ' for each search followed by comma ', ' Eg: ["Software Engineer", "Software Developer", "Selenium Developer"]
 search_terms = ["Software Engineer"]
-
+desired_salary = "80000"          # "80000", "90000", "100000" or "120000" and so on....
 # Search location, this will be filled in "City, state, or zip code" search box. If left empty as "", tool will not fill it.
 search_location = "United States"               # Some valid examples: "", "United States", "India", "Chicago, Illinois, United States", "90001, Los Angeles, California, United States", "Bengaluru, Karnataka, India", etc.
-
+#search_location = "United Kingdom"
+#search_location = "Canada"
+#search_location = "Australia"
+#search_location = "Mexico"
 
 # >>>>>>>>>>> Job Search Filters <<<<<<<<<<<
 ''' 
@@ -128,7 +131,7 @@ us_citizenship = "U.S. Citizen/Permanent Resident"
 website = ""                       # "www.example.bio" or "" and so on....
 
 # What to enter in your desired salary question, only enter in numbers inside quotes as some companies only allow numbers
-desired_salary = "120000"          # "80000", "90000", "100000" or "120000" and so on....
+
 
 # Example question: "On a scale of 1-10 how much experience do you have building web or mobile applications? 1 being very little or only in school, 10 being that you have built and launched applications to real users"
 confidence_level = "8"             # Any number between "1" to "10" including 1 and 10, put it in quotes ""
