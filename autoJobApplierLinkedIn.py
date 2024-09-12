@@ -301,7 +301,7 @@ def select_candidate_resume(modal, title, description):
         resume_name = resume_dict['default']
         if 'angular' in title_low:
             resume_name = resume_dict['angular']
-        elif 'laravel' in title_low:
+        elif 'laravel' in title_low or 'php' in title_low:
             resume_name = resume_dict['laravel']
         elif 'react' in title_low:
             resume_name = resume_dict['react']
