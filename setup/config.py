@@ -58,6 +58,7 @@ password = "example_password"      # Enter your password in the quotes
 # Enter your search terms inside '[ ]' with quotes ' "searching title" ' for each search followed by comma ', ' Eg: ["Software Engineer", "Software Developer", "Selenium Developer"]
 search_terms = ["Software Engineer"]
 desired_salary = "80000"          # "80000", "90000", "100000" or "120000" and so on....
+hourly_rate = '25'
 # Search location, this will be filled in "City, state, or zip code" search box. If left empty as "", tool will not fill it.
 search_location = "United States"               # Some valid examples: "", "United States", "India", "Chicago, Illinois, United States", "90001, Los Angeles, California, United States", "Bengaluru, Karnataka, India", etc.
 #search_location = "United Kingdom"

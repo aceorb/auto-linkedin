@@ -473,6 +473,7 @@ def answer_questions(questions_list, work_location):
 
             prev_answer = text.get_attribute("value")
             placeholder = text.get_attribute('placeholder')
+            class_names = text.get_attribute('class')
             if not prev_answer or overwrite_previous_answers:
                 if 'experience' in label or 'years' in label:
                     if 'node.js' in label:
@@ -518,10 +519,19 @@ def answer_questions(questions_list, work_location):
                 elif 'current company' in label: answer = current_company
                 elif 'mm/dd/yyyy' in placeholder:
                     answer = datetime.today().strftime('%m/%d/%Y')
-                else: answer = answer_common_questions(label,answer)
+                elif 'notice period in days' in label:
+                    answer = '0'
+                elif 'authorization. select 1 for us citizen select 2 for green card select 3 for ead select 4 for others' in label:
+                    answer = '2'
+                elif 'hourly rate' in label or 'hour rate' in label or 'current rate' in label or 'expected rate' in label:
+                    answer = hourly_rate
+                else: answer = answer_common_questions(label, answer)
                 if answer == "":
                     randomly_answered_questions.add((label_org, "text"))
-                    answer = "N/A"
+                    if '-numeric' in class_names:
+                        answer = '0'
+                    else:
+                        answer = "N/A"
                 text.clear()
                 text.send_keys(answer)
                 if do_actions:
