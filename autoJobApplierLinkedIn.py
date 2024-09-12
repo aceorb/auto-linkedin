@@ -402,11 +402,28 @@ def answer_questions(questions_list, work_location):
                 if option.is_selected(): prev_answer = options_labels[-1]
                 label_org += f' {options_labels[-1]},'
 
+            if label == "unknown":
+                if "Male" in label_org and "Female" in label_org:
+                    label = "unknown gender"
+                if "veteran" in label_org or "Veteran" in label_org:
+                    label = "unkown veteran"
+                if "disability" in label_org or "Disability" in label_org:
+                    label = "unkown disability"
+
             if overwrite_previous_answers or prev_answer is None:
                 if 'citizenship' in label or 'employment eligibility' in label: answer = us_citizenship
-                elif 'veteran' in label or 'protected' in label: answer = veteran_status
+                elif 'veteran' in label or 'protected' in label:
+                    answer = veteran_status
+                    if 'unknown' in label:
+                        answer = 'I am not a protected veteran'
+                elif 'gender' in label:
+                    answer = gender
+                    if 'unknown' in label:
+                        answer = 'Male'
                 elif 'disability' in label or 'handicapped' in label:
                     answer = disability_status
+                    if 'unknown' in label:
+                        answer = 'No, I Don\'t Have A Disability, Or A History/Record Of Having A Disability'
                 elif 'future require' in label: answer = require_visa
                 elif 'authorized to work' in label: answer = authorized_to_work_usa
                 else: answer = answer_common_questions(label,answer)
@@ -441,6 +458,7 @@ def answer_questions(questions_list, work_location):
             label = label_org.lower()
 
             prev_answer = text.get_attribute("value")
+            placeholder = text.get_attribute('placeholder')
             if not prev_answer or overwrite_previous_answers:
                 if 'experience' in label or 'years' in label:
                     if 'node.js' in label:
@@ -484,6 +502,8 @@ def answer_questions(questions_list, work_location):
                 elif 'country' in label: answer = country
                 elif 'linkedin' in label: answer = linkedin_profile
                 elif 'current company' in label: answer = current_company
+                elif 'mm/dd/yyyy' in placeholder:
+                    answer = datetime.today().strftime('%m/%d/%Y')
                 else: answer = answer_common_questions(label,answer)
                 if answer == "":
                     randomly_answered_questions.add((label_org, "text"))
