@@ -299,20 +299,33 @@ def select_candidate_resume(modal, title, description):
         title_low = title.lower()
         description_low = description.lower()
         resume_name = resume_dict['default']
-        if 'angular' in title_low or 'angular' in description_low:
+        if 'angular' in title_low:
             resume_name = resume_dict['angular']
-        elif 'laravel' in title_low or 'laravel' in description_low:
+        elif 'laravel' in title_low:
             resume_name = resume_dict['laravel']
-        elif 'react' in title_low or 'react' in description_low:
+        elif 'react' in title_low:
             resume_name = resume_dict['react']
         else:
-            resume_name = resume_dict['default']
+            if 'angular' in description_low:
+                resume_name = resume_dict['angular']
+            elif 'laravel' in description_low:
+                resume_name = resume_dict['laravel']
+            elif 'react' in description_low:
+                resume_name = resume_dict['react']
+            else:
+                resume_name = resume_dict['default']
+        # check if selected originally
 
         all_resume_pdfs = modal.find_elements(By.CLASS_NAME, 'jobs-document-upload-redesign-card__container')
         for resume_option in all_resume_pdfs:
             option_text = resume_option.text
             if resume_name in option_text:
-                resume_option.click()
+                if 'jobs-document-upload-redesign-card__container--selected' in resume_option.get_attribute('class'):
+                    #alreday selected, do nothing
+                    pass
+                else:
+                    resume_option.click()
+                    buffer(1)
                 return True, resume_name
 
         if try_xp(modal, '//div[contains(@class, "jobs-document-upload__show-more-less-button-container")]//button'):
@@ -322,6 +335,7 @@ def select_candidate_resume(modal, title, description):
                 option_text = resume_option.text
                 if resume_name in option_text:
                     resume_option.click()
+                    buffer(1)
                     return True, resume_name
 
         return False, "Selecting Resume Error"
