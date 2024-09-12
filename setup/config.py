@@ -108,6 +108,12 @@ phone_number = "9613236364"        # Enter your 10 digit number in quotes Eg: "9
 # Give an relative or absolute path of your default resume to be uploaded. If file in not found, will continue using your previously uploaded resume in LinkedIn.
 default_resume_path = "all_resumes/default/resume.pdf"      # (In Development)
 
+resume_dict = {
+    "default": "Carlos-Resume-React-FE.pdf",
+    "angular": "Carlos-Resume-Angular-FE.pdf",
+    "react": "Carlos-Resume-React-FE.pdf",
+    "laravel": "Carlos-Resume-Laravel-FS.pdf"
+}
 # What do you want to answer for questions that ask about years of experience you have, this is different from current_experience? 
 years_of_experience = "6"          # A number in quotes Eg: "0","1","2","3","4", etc.
 years_of_experience_nodejs = "9"

@@ -45,7 +45,7 @@ middle_name = middle_name.strip()
 last_name = last_name.strip()
 full_name = first_name + " " + middle_name + " " + last_name if middle_name else first_name + " " + last_name
 
-useNewResume = True
+useNewResume = False
 randomly_answered_questions = set()
 
 tabs_count = 1
@@ -292,6 +292,42 @@ def upload_resume(modal, resume):
         return True, os.path.basename(default_resume_path)
     except: return False, "Previous resume"
 
+#Function to select resume
+def select_candidate_resume(modal, title, description):
+    try:
+        #select resume name
+        title_low = title.lower()
+        description_low = description.lower()
+        resume_name = resume_dict['default']
+        if 'angular' in title_low or 'angular' in description_low:
+            resume_name = resume_dict['angular']
+        elif 'laravel' in title_low or 'laravel' in description_low:
+            resume_name = resume_dict['laravel']
+        elif 'react' in title_low or 'react' in description_low:
+            resume_name = resume_dict['react']
+        else:
+            resume_name = resume_dict['default']
+
+        all_resume_pdfs = modal.find_elements(By.CLASS_NAME, 'jobs-document-upload-redesign-card__container')
+        for resume_option in all_resume_pdfs:
+            option_text = resume_option.text
+            if resume_name in option_text:
+                resume_option.click()
+                return True, resume_name
+
+        if try_xp(modal, '//div[contains(@class, "jobs-document-upload__show-more-less-button-container")]//button'):
+            buffer(1)
+            all_resume_pdfs = modal.find_elements(By.CLASS_NAME, 'jobs-document-upload-redesign-card__container')
+            for resume_option in all_resume_pdfs:
+                option_text = resume_option.text
+                if resume_name in option_text:
+                    resume_option.click()
+                    return True, resume_name
+
+        return False, "Selecting Resume Error"
+    except:
+        return False, "Selecting Resume Error"
+    pass
 # Function to answer common questions for Easy Apply
 def answer_common_questions(label, answer):
     if 'sponsorship' in label or 'visa' in label or 'sponsor ' in label: answer = require_visa
@@ -852,7 +888,11 @@ def apply_to_jobs(search_terms):
                                         raise Exception("Seems like stuck in a continuous loop of next, probably because of new questions.")
                                     print(f"next_counter:{next_counter}")
                                     questions_list = answer_questions(questions_list, work_location)
-                                    if useNewResume and not uploaded: uploaded, resume = upload_resume(modal, default_resume_path)
+                                    if not uploaded:
+                                        if useNewResume:
+                                            uploaded, resume = upload_resume(modal, default_resume_path)
+                                        else:
+                                            uploaded, resume = select_candidate_resume(modal, title, description)
                                     try: next_button = modal.find_element(By.XPATH, './/span[normalize-space(.)="Review"]') 
                                     except NoSuchElementException:  next_button = modal.find_element(By.XPATH, './/button[contains(span, "Next")]')
                                     try: next_button.click()
