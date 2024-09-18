@@ -207,7 +207,21 @@ about_company_good_words = []      # (dynamic multiple search) or leave empty as
 
 
 # Avoid applying to these companies if they have these bad words in their 'Job Description' section...  (In development)
-bad_words = ["Embedded Engineering", "Dev Ops", "C++", "Intership", "Volunteer", "Swift", "Kotlin", "iOS", "ios", "Android"]                     # (dynamic multiple search) or leave empty as []. Case Insensitive. Ex: ["word_1", "phrase 1", "word word", "polygraph", "US Citizenship", "Security Clearance"]
+bad_words = ["Embedded Engineering", "Intership", "Salesforce", "Security Clearance"]                     # (dynamic multiple search) or leave empty as []. Case Insensitive. Ex: ["word_1", "phrase 1", "word word", "polygraph", "US Citizenship", "Security Clearance"]
+good_skills = [
+    "javascript",
+    "react",
+    "typescript",
+    "angular",
+    "node.",
+    "front-end",
+    "front end",
+    "frontend",
+    "next.js",
+    "java",
+    "spring boot",
+    "vue"
+]
 
 # Do you have an active Security Clearance? (True for Yes and False for No)
 security_clearance = False         # True or False

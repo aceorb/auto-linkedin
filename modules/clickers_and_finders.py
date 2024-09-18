@@ -68,10 +68,10 @@ def boolean_button_click(driver, actions, x):
         # print_lg(e)
 
 # Find functions
-def find_by_class(driver, class_name, time=5.0):
+def find_by_class(driver, class_name, time=10.0):
     return WebDriverWait(driver, time).until(EC.presence_of_element_located((By.CLASS_NAME, class_name)))
 
-def find_elements_by_class(driver, class_name, time=5.0):
+def find_elements_by_class(driver, class_name, time=10.0):
     return WebDriverWait(driver, time).until(EC.presence_of_all_elements_located((By.CLASS_NAME, class_name)))
 
 

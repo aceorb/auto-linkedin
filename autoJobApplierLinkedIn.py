@@ -850,7 +850,12 @@ def apply_to_jobs(search_terms):
                                     match = re.search(r'(\d+)', skills_match_text)
                                     if match:
                                         skill_match_count = int(match.group(1))
-                                        if "javascript" not in skills_match_text and "react" not in skills_match_text and "typescript" not in skills_match_text and "angular" not in skills_match_text and "node." not in skills_match_text and "front-end" not in skills_match_text and "front end" not in skills_match_text and "next.js" not in skills_match_text:
+                                        found_good_skill = False
+                                        for good_skill in good_skills:
+                                            if good_skill in skills_match_text:
+                                                found_good_skill = True
+                                                break
+                                        if not found_good_skill:
                                             message = f'\n{skills_match_text}\n\n. Skill does not Match. Skipping this job!\n'
                                             reason = "Skill does not Match"
                                             skip = True
