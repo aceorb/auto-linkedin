@@ -192,6 +192,8 @@ def apply_filters():
 # Function to get pagination element and current page number
 def get_page_info():
     try:
+        #todo
+        sleep(5)
         pagination_element = find_by_class(driver, "artdeco-pagination")
         scroll_to_view(driver, pagination_element)
         current_page = int(pagination_element.find_element(By.XPATH, "//li[contains(@class, 'active')]").text)
@@ -704,6 +706,8 @@ def apply_to_jobs(search_terms):
         print_lg(f'\n>>>> Now searching for "{searchTerm}" <<<<\n\n')
 
         if search_location.strip():
+            #todo
+            sleep(5)
             print_lg(f'Setting search location as: "{search_location.strip()}"')
             search_location_ele = try_xp(driver, "//input[@aria-label='City, state, or zip code'and not(@disabled)]", False) #  and not(@aria-hidden='true')]")
             search_location_ele.clear()
