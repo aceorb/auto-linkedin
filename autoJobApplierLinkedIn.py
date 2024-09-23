@@ -965,12 +965,14 @@ def apply_to_jobs(search_terms):
                                     message = f'\n{jobdetail_module_content_text}\n\n". Skipping this job!\n'
                                     reason = "Not match country requirement in About Job"
                                     skip = True
+                                    print_lg("Your location does not match")
                             except Exception as e:
                                  print_lg("Not found job-details-how-you-match-card__container")
                         if skip:
                             print_lg(message)
                             failed_job(job_id, job_link, resume, date_listed, reason, message, "Skipped", screenshot_name)
                             rejected_jobs.add(job_id)
+                            discard_job()
                             skip_count += 1
                             continue
                         try: 
