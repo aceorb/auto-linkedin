@@ -20,7 +20,7 @@ import pyautogui
 pyautogui.FAILSAFE = False
 from random import choice, shuffle, randint
 from datetime import datetime
-from modules.open_chrome import *
+from modules.open_chrome import open_chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -54,6 +54,10 @@ external_jobs_count = 0
 failed_count = 0
 skip_count = 0
 dailyEasyApplyLimitReached = False
+
+driver = None
+wait = None
+actions = None
 
 re_experience = re.compile(r'[(]?\s*(\d+)\s*[)]?\s*[-to]*\s*\d*[+]*\s*year[s]?', re.IGNORECASE)
 #>
@@ -1055,7 +1059,7 @@ def apply_to_jobs(search_terms):
             print_lg("Failed to find Job listings!")
             critical_error_log("In Applier", e)
             # print_lg(e)
-
+    return False
         
 def run(total_runs):
     if dailyEasyApplyLimitReached:
@@ -1080,11 +1084,11 @@ chatGPT_tab = False
 linkedIn_tab = False
 def main():
     try:
-        global linkedIn_tab, tabs_count, useNewResume
+        global linkedIn_tab, tabs_count, useNewResume, driver, wait, actions
         alert_title = "Error Occurred. Closing Browser!"
         total_runs = 1        
         validate_config()
-
+        (driver, wait, actions) = open_chrome()
 
         if not os.path.exists(default_resume_path):
          #   pyautogui.alert(text='Your default resume "{}" is missing! Please update it\'s folder path "default_resume_path" in config.py\n\nOR\n\nAdd a resume with exact name and path (check for spelling mistakes including cases).\n\n\nFor now the bot will continue using your previous upload from LinkedIn!'.format(default_resume_path), title="Missing Resume", button="OK")
