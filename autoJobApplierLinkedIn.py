@@ -59,8 +59,29 @@ driver = None
 wait = None
 actions = None
 
+g_working_on_page = start_page
+
 re_experience = re.compile(r'[(]?\s*(\d+)\s*[)]?\s*[-to]*\s*\d*[+]*\s*year[s]?', re.IGNORECASE)
 #>
+
+# move to page function
+def move_to_page(target_page):
+
+    while True:
+        wait.until(EC.presence_of_all_elements_located((By.XPATH, "//li[contains(@class, 'jobs-search-results__list-item')]")))
+        pagination_element, cur_page_num = get_page_info()
+        if pagination_element == None:
+            print_lg("Couldn't find pagination element, probably at the end page of results!")
+            return False
+        print_lg(f"\n>-> Now on Page {cur_page_num} \n")
+        if cur_page_num < target_page:
+            try:
+                pagination_element.find_element(By.XPATH, f"//button[@aria-label='Page {cur_page_num + 1}']").click()
+            except NoSuchElementException:
+                print_lg(f"\n>-> Didn't find Page {cur_page_num + 1}. Probably at the end page of results!\n")
+                return False
+        else:
+            return True
 
 
 #< Login Functions
@@ -720,11 +741,12 @@ def discard_job():
 
 # Function to apply to jobs
 def apply_to_jobs(search_terms):
+    #only search search_terms[0]
     applied_jobs = get_applied_job_ids()
     error_jobs = get_error_job_ids()
     rejected_jobs = set()
     blacklisted_companies = set()
-    global current_city, failed_count, skip_count, easy_applied_count, external_jobs_count, tabs_count, pause_before_submit, pause_at_failed_question, useNewResume
+    global current_city, failed_count, skip_count, easy_applied_count, external_jobs_count, tabs_count, pause_before_submit, pause_at_failed_question, useNewResume, g_working_on_page
     current_city = current_city.strip()
 
     if randomize_search_order:  shuffle(search_terms)
@@ -747,12 +769,18 @@ def apply_to_jobs(search_terms):
 
         current_count = 0
         try:
+            # move to specific page
+            if g_working_on_page > 1:
+                if not move_to_page(g_working_on_page):
+                    return False
+
             while current_count < switch_number:
+
                 # Wait until job listings are loaded
                 wait.until(EC.presence_of_all_elements_located((By.XPATH, "//li[contains(@class, 'jobs-search-results__list-item')]")))
 
                 pagination_element, current_page = get_page_info()
-
+                g_working_on_page = current_page
                 # Find all job listings in current page
                 buffer(3)
                 job_listings = driver.find_elements(By.CLASS_NAME, "jobs-search-results__list-item")
@@ -1053,7 +1081,7 @@ def apply_to_jobs(search_terms):
                         sleep(5)
                 except NoSuchElementException:
                     print_lg(f"\n>-> Didn't find Page {current_page+1}. Probably at the end page of results!\n")
-                    break
+                    return True
 
         except Exception as e:
             print_lg("Failed to find Job listings!")
@@ -1063,12 +1091,13 @@ def apply_to_jobs(search_terms):
         
 def run(total_runs):
     if dailyEasyApplyLimitReached:
-        return total_runs
+        return total_runs, True
     print_lg("\n########################################################################################################################\n")
     print_lg(f"Date and Time: {datetime.now()}")
     print_lg(f"Cycle number: {total_runs}")
+    print_lg(f"Start Page: {g_working_on_page}")
     print_lg(f"Currently looking for jobs posted within '{date_posted}' and sorting them by '{sort_by}'")
-    apply_to_jobs(search_terms)
+    run_result = apply_to_jobs(search_terms)
     print_lg("########################################################################################################################\n")
     if not dailyEasyApplyLimitReached:
         print_lg("Sleeping for 5 min...")
@@ -1076,47 +1105,48 @@ def run(total_runs):
         print_lg("Few more min... Gonna start with in next 2 min...")
         sleep(120)
     buffer(3)
-    return total_runs + 1
+    return total_runs + 1, run_result
 
 
 
 chatGPT_tab = False
 linkedIn_tab = False
 def main():
-    try:
-        global linkedIn_tab, tabs_count, useNewResume, driver, wait, actions
-        alert_title = "Error Occurred. Closing Browser!"
-        total_runs = 1        
-        validate_config()
-        (driver, wait, actions) = open_chrome()
+    while run_non_stop:
+        success = False
+        try:
+            global linkedIn_tab, tabs_count, useNewResume, driver, wait, actions
+            alert_title = "Error Occurred. Closing Browser!"
+            total_runs = 1
+            validate_config()
+            (driver, wait, actions) = open_chrome()
 
-        if not os.path.exists(default_resume_path):
-         #   pyautogui.alert(text='Your default resume "{}" is missing! Please update it\'s folder path "default_resume_path" in config.py\n\nOR\n\nAdd a resume with exact name and path (check for spelling mistakes including cases).\n\n\nFor now the bot will continue using your previous upload from LinkedIn!'.format(default_resume_path), title="Missing Resume", button="OK")
-            useNewResume = False
-        
-        # Login to LinkedIn
-        tabs_count = len(driver.window_handles)
-        driver.get("https://www.linkedin.com/login")
-        if not is_logged_in_LN(): login_LN()
-        
-        linkedIn_tab = driver.current_window_handle
+            if not os.path.exists(default_resume_path):
+             #   pyautogui.alert(text='Your default resume "{}" is missing! Please update it\'s folder path "default_resume_path" in config.py\n\nOR\n\nAdd a resume with exact name and path (check for spelling mistakes including cases).\n\n\nFor now the bot will continue using your previous upload from LinkedIn!'.format(default_resume_path), title="Missing Resume", button="OK")
+                useNewResume = False
 
-        # Login to ChatGPT in a new tab for resume customization
-        if use_resume_generator:
-            try:
-                driver.switch_to.new_window('tab')
-                driver.get("https://chat.openai.com/")
-                if not is_logged_in_GPT(): login_GPT()
-                open_resume_chat()
-                global chatGPT_tab
-                chatGPT_tab = driver.current_window_handle
-            except Exception as e:
-                print_lg("Opening OpenAI chatGPT tab failed!")
+            # Login to LinkedIn
+            tabs_count = len(driver.window_handles)
+            driver.get("https://www.linkedin.com/login")
+            if not is_logged_in_LN(): login_LN()
 
-        # Start applying to jobs
-        driver.switch_to.window(linkedIn_tab)
-        total_runs = run(total_runs)
-        while(run_non_stop):
+            linkedIn_tab = driver.current_window_handle
+
+            # Login to ChatGPT in a new tab for resume customization
+            if use_resume_generator:
+                try:
+                    driver.switch_to.new_window('tab')
+                    driver.get("https://chat.openai.com/")
+                    if not is_logged_in_GPT(): login_GPT()
+                    open_resume_chat()
+                    global chatGPT_tab
+                    chatGPT_tab = driver.current_window_handle
+                except Exception as e:
+                    print_lg("Opening OpenAI chatGPT tab failed!")
+
+            # Start applying to jobs
+            driver.switch_to.window(linkedIn_tab)
+
             if cycle_date_posted:
                 date_options = ["Any time", "Past month", "Past week", "Past 24 hours"]
                 global date_posted
@@ -1124,48 +1154,51 @@ def main():
             if alternate_sortby:
                 global sort_by
                 sort_by = "Most recent" if sort_by == "Most relevant" else "Most relevant"
-                total_runs = run(total_runs)
-                sort_by = "Most recent" if sort_by == "Most relevant" else "Most relevant"
-            total_runs = run(total_runs)
+
+            (total_runs, success) = run(total_runs)
             if dailyEasyApplyLimitReached:
                 break
-        
 
-    except NoSuchWindowException:   pass
-    except Exception as e:
-        critical_error_log("In Applier Main", e)
-     #   pyautogui.alert(e,alert_title)
-    finally:
-        print_lg("\n\nTotal runs:                     {}".format(total_runs))
-        print_lg("Jobs Easy Applied:              {}".format(easy_applied_count))
-        print_lg("External job links collected:   {}".format(external_jobs_count))
-        print_lg("                              ----------")
-        print_lg("Total applied or collected:     {}".format(easy_applied_count + external_jobs_count))
-        print_lg("\nFailed jobs:                    {}".format(failed_count))
-        print_lg("Irrelevant jobs skipped:        {}\n".format(skip_count))
-        if randomly_answered_questions: print_lg("\n\nQuestions randomly answered:\n  {}  \n\n".format(";\n".join(str(question) for question in randomly_answered_questions)))
-        quote = choice([
-            "You're one step closer than before.", 
-            "All the best with your future interviews.", 
-            "Keep up with the progress. You got this.", 
-            "If you're tired, learn to take rest but never give up.",
-            "Success is not final, failure is not fatal: It is the courage to continue that counts. - Winston Churchill",
-            "Believe in yourself and all that you are. Know that there is something inside you that is greater than any obstacle. - Christian D. Larson",
-            "Every job is a self-portrait of the person who does it. Autograph your work with excellence.",
-            "The only way to do great work is to love what you do. If you haven't found it yet, keep looking. Don't settle. - Steve Jobs",
-            "Opportunities don't happen, you create them. - Chris Grosser",
-            "The road to success and the road to failure are almost exactly the same. The difference is perseverance.",
-            "Obstacles are those frightful things you see when you take your eyes off your goal. - Henry Ford",
-            "The only limit to our realization of tomorrow will be our doubts of today. - Franklin D. Roosevelt"
-            ])
-        msg = f"\n{quote}\n\n\nBest regards,\n/\n\n"
-      #  pyautogui.alert(msg, "Exiting..")
-        print_lg(msg,"Closing the browser...")
-        if tabs_count >= 10:
-            msg = "NOTE: IF YOU HAVE MORE THAN 10 TABS OPENED, PLEASE CLOSE OR BOOKMARK THEM!\n\nOr it's highly likely that application will just open browser and not do anything next time!" 
-            pyautogui.alert(msg,"Info")
-            print_lg("\n"+msg)
-        try: driver.quit()
-        except Exception as e: critical_error_log("When quitting...", e)
+
+        except NoSuchWindowException:   pass
+        except Exception as e:
+            critical_error_log("In Applier Main", e)
+         #   pyautogui.alert(e,alert_title)
+        finally:
+            print_lg("\n\nTotal runs:                     {}".format(total_runs))
+            print_lg("Jobs Easy Applied:              {}".format(easy_applied_count))
+            print_lg("External job links collected:   {}".format(external_jobs_count))
+            print_lg("                              ----------")
+            print_lg("Total applied or collected:     {}".format(easy_applied_count + external_jobs_count))
+            print_lg("\nFailed jobs:                    {}".format(failed_count))
+            print_lg("Irrelevant jobs skipped:        {}\n".format(skip_count))
+            if randomly_answered_questions: print_lg("\n\nQuestions randomly answered:\n  {}  \n\n".format(";\n".join(str(question) for question in randomly_answered_questions)))
+            quote = choice([
+                "You're one step closer than before.",
+                "All the best with your future interviews.",
+                "Keep up with the progress. You got this.",
+                "If you're tired, learn to take rest but never give up.",
+                "Success is not final, failure is not fatal: It is the courage to continue that counts. - Winston Churchill",
+                "Believe in yourself and all that you are. Know that there is something inside you that is greater than any obstacle. - Christian D. Larson",
+                "Every job is a self-portrait of the person who does it. Autograph your work with excellence.",
+                "The only way to do great work is to love what you do. If you haven't found it yet, keep looking. Don't settle. - Steve Jobs",
+                "Opportunities don't happen, you create them. - Chris Grosser",
+                "The road to success and the road to failure are almost exactly the same. The difference is perseverance.",
+                "Obstacles are those frightful things you see when you take your eyes off your goal. - Henry Ford",
+                "The only limit to our realization of tomorrow will be our doubts of today. - Franklin D. Roosevelt"
+                ])
+            msg = f"\n{quote}\n\n\nBest regards,\n/\n\n"
+          #  pyautogui.alert(msg, "Exiting..")
+            print_lg(msg,"Closing the browser...")
+            if tabs_count >= 10:
+                msg = "NOTE: IF YOU HAVE MORE THAN 10 TABS OPENED, PLEASE CLOSE OR BOOKMARK THEM!\n\nOr it's highly likely that application will just open browser and not do anything next time!"
+                pyautogui.alert(msg,"Info")
+                print_lg("\n"+msg)
+            try: driver.quit()
+            except Exception as e: critical_error_log("When quitting...", e)
+
+            if success:
+                print_lg("ALL THINGS ARE CLEAR")
+                break
 
 main()
