@@ -159,7 +159,6 @@ def get_error_job_ids():
                         error_job_ids.add(row[0])
     except FileNotFoundError:
         print_lg(f"The CSV file '{failed_file_name}' does not exist.")
-    print(f"{error_job_ids}")
     return error_job_ids
 
 
@@ -267,7 +266,6 @@ def get_job_main_details(job, blacklisted_companies, rejected_jobs, error_jobs, 
     work_location = work_location[:work_location.rfind('(')].strip()
     # Skip if previously rejected due to blacklist or already applied
     skip = False
-    print(f"{job_id} - errorlist:{error_jobs}")
 
     if company in blacklisted_companies:
         print_lg(f'Skipping "{title} | {company}" job (Blacklisted Company). Job ID: {job_id}!')
