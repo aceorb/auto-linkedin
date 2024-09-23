@@ -208,12 +208,36 @@ def get_page_info():
 
 # Function to get job main details
 def get_job_main_details(job, blacklisted_companies, rejected_jobs, error_jobs, applied_jobs):
-    job_details_button = job.find_element(By.CLASS_NAME, "job-card-list__title")
-    scroll_to_view(driver, job_details_button, True)
-    title = job_details_button.text
-    company = job.find_element(By.CLASS_NAME, "job-card-container__primary-description").text
     job_id = job.get_dom_attribute('data-occludable-job-id')
-    work_location = job.find_element(By.CLASS_NAME, "job-card-container__metadata-item").text
+
+    if job_id:
+        job_details_button = job.find_element(By.CLASS_NAME, "job-card-list__title")
+        scroll_to_view(driver, job_details_button, True)
+        title = job_details_button.text
+        company = job.find_element(By.CLASS_NAME, "job-card-container__primary-description").text
+        work_location = job.find_element(By.CLASS_NAME, "job-card-container__metadata-item").text
+        applied = False
+        try:
+            if job.find_element(By.CLASS_NAME, "job-card-container__footer-job-state").text == "Applied":
+                applied = True
+        except:
+            pass
+
+    else:
+        job_card_posting_wrapper = job.find_element(By.CLASS_NAME, "job-card-job-posting-card-wrapper")
+        job_id = job_card_posting_wrapper.get_dom_attribute('data-job-id')
+        job_details_button = job.find_element(By.CLASS_NAME, "job-card-job-posting-card-wrapper__card-link")
+        scroll_to_view(driver, job_details_button, True)
+        title = job.find_element(By.CLASS_NAME, "artdeco-entity-lockup__title").text
+        company = job.find_element(By.CLASS_NAME, "artdeco-entity-lockup__subtitle").text
+        work_location = job.find_element(By.CLASS_NAME, "artdeco-entity-lockup__caption").text
+        applied = False
+        try:
+            if job.find_element(By.CLASS_NAME, "job-card-job-posting-card-wrapper__footer-items").text == "Applied":
+                applied = True
+        except:
+            pass
+
     work_style = work_location[work_location.rfind('(')+1:work_location.rfind(')')]
     work_location = work_location[:work_location.rfind('(')].strip()
     # Skip if previously rejected due to blacklist or already applied
@@ -235,11 +259,11 @@ def get_job_main_details(job, blacklisted_companies, rejected_jobs, error_jobs, 
     elif job_id in applied_jobs:
         print_lg(f'Skipping already applied to "{title} | {company}" job. Job ID: {job_id}!')
         skip = True
-    try:
-        if job.find_element(By.CLASS_NAME, "job-card-container__footer-job-state").text == "Applied":
-            skip = True
-            print_lg(f'Already applied to "{title} | {company}" job. Job ID: {job_id}!')
-    except: pass
+
+    if applied:
+        skip = True
+        print_lg(f'Already applied to "{title} | {company}" job. Job ID: {job_id}!')
+
     try:
         if not skip: job_details_button.click()
     except Exception as e:
@@ -905,11 +929,14 @@ def apply_to_jobs(search_terms):
                     # Case 1: Easy Apply Button
                     if wait_span_click(driver, "Easy Apply", 2):
                         if not skip and check_location_requirement:
-                            jobdetail_module_content_text = find_by_class(driver, "job-details-module__content").text
-                            if "Your location does not match" in jobdetail_module_content_text:
-                                message = f'\n{jobdetail_module_content_text}\n\n". Skipping this job!\n'
-                                reason = "Not match country requirement in About Job"
-                                skip = True
+                            try:
+                                jobdetail_module_content_text = find_by_class(driver, "job-details-how-you-match-card__container").text
+                                if "Your location does not match" in jobdetail_module_content_text:
+                                    message = f'\n{jobdetail_module_content_text}\n\n". Skipping this job!\n'
+                                    reason = "Not match country requirement in About Job"
+                                    skip = True
+                            except Exception as e:
+                                 print_lg("Not found job-details-how-you-match-card__container")
                         if skip:
                             print_lg(message)
                             failed_job(job_id, job_link, resume, date_listed, reason, message, "Skipped", screenshot_name)
@@ -1057,9 +1084,10 @@ def main():
         alert_title = "Error Occurred. Closing Browser!"
         total_runs = 1        
         validate_config()
-        
+
+
         if not os.path.exists(default_resume_path):
-            pyautogui.alert(text='Your default resume "{}" is missing! Please update it\'s folder path "default_resume_path" in config.py\n\nOR\n\nAdd a resume with exact name and path (check for spelling mistakes including cases).\n\n\nFor now the bot will continue using your previous upload from LinkedIn!'.format(default_resume_path), title="Missing Resume", button="OK")
+         #   pyautogui.alert(text='Your default resume "{}" is missing! Please update it\'s folder path "default_resume_path" in config.py\n\nOR\n\nAdd a resume with exact name and path (check for spelling mistakes including cases).\n\n\nFor now the bot will continue using your previous upload from LinkedIn!'.format(default_resume_path), title="Missing Resume", button="OK")
             useNewResume = False
         
         # Login to LinkedIn
