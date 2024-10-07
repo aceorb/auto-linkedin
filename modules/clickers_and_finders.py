@@ -33,6 +33,20 @@ def wait_span_click(driver, x, time=5.0, click=True, scroll=True, scrollTop = Fa
             # print_lg(e)
             return False
 
+def wait_span_easy_apply_click(driver, x, time=5.0, click=True, scroll=True, scrollTop = False):
+    if x:
+        try:
+            button = WebDriverWait(driver,time).until(EC.presence_of_element_located((By.XPATH, '//span[normalize-space(.)="'+x+'" and @class="artdeco-button__text"]')))
+            if scroll:  scroll_to_view(driver, button, scrollTop)
+            if click:
+                button.click()
+                buffer(click_gap)
+            return button
+        except Exception as e:
+            print_lg("Click Failed! Didn't find '"+x+"'")
+            # print_lg(e)
+            return False
+
 def multi_sel(driver, l, time=5.0):
     for x in l:
         try:

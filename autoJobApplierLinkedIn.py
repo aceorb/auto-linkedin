@@ -957,7 +957,7 @@ def apply_to_jobs(search_terms):
 
                     uploaded = False
                     # Case 1: Easy Apply Button
-                    if wait_span_click(driver, "Easy Apply", 2, False):
+                    if wait_span_easy_apply_click(driver, "Easy Apply", 2, False):
                         if not skip and check_location_requirement:
                             try:
                                 jobdetail_module_content_text = find_by_class(driver, "job-details-how-you-match-card__container").text
@@ -975,7 +975,7 @@ def apply_to_jobs(search_terms):
                             skip_count += 1
                             continue
 
-                        wait_span_click(driver, "Easy Apply", 2)
+                        wait_span_easy_apply_click(driver, "Easy Apply", 2)
 
                         try: 
                             try:
